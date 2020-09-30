@@ -1,0 +1,11 @@
+{
+  "repos": ["filetrust/k8-reverse-proxy",
+            "filetrust/k8-traffic-generator",
+            "filetrust/k8-glasswall-rebuild",
+            "filetrust/k8-data-visualization",
+            "filetrust/k8-performance-use-cases",
+            "filetrust/rebuild-k8s-filetypedetection"],
+  "gituser": "---",
+  "token": "---",
+  "url": "https://api.github.com/repos/"
+}

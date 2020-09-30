@@ -1,0 +1,8 @@
+#Ignore files with sensitive information
+*.csv
+*.yml
+*.yaml
+*.xlsx
+*.png
+*.gv
+*.pdf

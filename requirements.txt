@@ -1,7 +1,0 @@
-PyGithub
-requests
-pandas
-seaborn
-numpy
-matplotlib
-config

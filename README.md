@@ -34,20 +34,20 @@ Objective: Consume, process, normalize and visualize GitHub Issues data
 * Key points   
  * Setup a serverless workflow which gets triggered with GitHub issues events (We should evaluate if we can use github actions or else go with AWS)
  * The event data in JSON format (committed to a GitHub repo) to be injected to the elastic server(e..g what log_to_elk does for JIRA).
- * Leverage osbot_aws api from public APIS https://github.com/owasp-sbot/ managed by GW. The bot API will fetch data from the elastic server. 
- * The raw issue data, to be consumed by the Jupyter Notebooks notebook. 
+ * Leverage osbot_aws api from public APIS https://github.com/owasp-sbot/ managed by GW. The bot API will fetch data from the elastic server.
+ * The raw issue data, to be consumed by the Jupyter Notebooks notebook.
  * The data stored on a separate repo will allow the Developers working on the visualization to not have to deal with the data collection.
  * For visualisation, use notebooks since they are good for prototyping, but we will need a Web Based UI to access the data.
  * All code should follow Coding guideline, formatted in IDE and static analysis need to be done.
 
-  
+
 ## Running Jupyter Notebooks
 
 Add support for running Jupyter Notebooks docker image locally (mounting the current source code as the root of the notebooks folder)
 
 ### Windows Environments
 
-* Navigate to "k8-data-visualization\docker\local-jupyter" directory. 
+* Navigate to "k8-data-visualization\docker\local-jupyter" directory.
 Fire the following command
 
 ```
@@ -57,7 +57,7 @@ Local docker image will be built
 
 <br><img src="./img/build_nbs.jpeg" alt="Access" width="650"/><br>
 
-* Navigate back to "k8-data-visualization\" directory. 
+* Navigate back to "k8-data-visualization\" directory.
 Fire the following command
 
 ```
@@ -88,6 +88,16 @@ Local docker image will be built and started
 <br><img src="./img/started_nbs.png" alt="Access" width="650"/><br>
 
 
+## Pull Request Guideline
+* List the steps on how to execute the work you have done in the README.md(inside your folder)
+* Create a screenshot of the output(if available) and have it posted in the issue comments
+* Create a demo video to show the work you have done. Post the link of the video in the raw-videos and p-data-visulisation channel.
+* Create a pull request
+* Set the issue "pipeline" to "peer review"
+* Set the issue "label" to "ready-for-review"
+* Set the issue "reviews" to "dinis-cruz-gw" or "DinisCruz"
+* In our slack channel inform Dinis and me with the Pull Request link
+
 ## Coding Guideline
 
 These are the coding guidelines we tend to follow for Python projects at Glasswall
@@ -109,7 +119,7 @@ These are the coding guidelines we tend to follow for Python projects at Glasswa
 
 ```
 	CONST PARTNERED = 'We have partenered with multiple clients to look out '\
-    
+
                        'for opportunities to get more clientelle'
 ```
 
@@ -170,7 +180,6 @@ CONST_GW_PROXY='gw-proxy'
 
 * Commit often and with clear commit messages
 
-* You can use whatever font size or face you want, as long as that setting is not pushed to the main repo 
+* You can use whatever font size or face you want, as long as that setting is not pushed to the main repo
 
 * Align formatting of code using common sense
-

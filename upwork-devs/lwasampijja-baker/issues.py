@@ -15,23 +15,23 @@ warnings.filterwarnings('ignore')
 
 class Issues:
     def __init__(self, repos):
-        self.repos = repos
-        token = 'mytoken'
-        self.headers = {'Authorization': f'token {token}'}
+        self.repos                          = repos
+        token                               = 'mytoken'
+        self.headers                        = {'Authorization': f'token {token}'}
         self.configure_pandas()
-        self.df = self.init_df()
+        self.df                             = self.init_df()
 
     def init_df(self):
         try:
-            dfs = []
+            dfs                             = []
             for repo in self.repos:
-                url = f'https://api.github.com/repos/filetrust/{repo}/issues'
-                res = requests.get(url, headers=self.headers, params={'state': 'all'}).json()
-                data = json_normalize(res, max_level=1)
-                temp_df = pd.DataFrame(data)
-                temp_df['repo']= repo
+                url                         = f'https://api.github.com/repos/filetrust/{repo}/issues'
+                res                         = requests.get(url, headers=self.headers, params={'state': 'all'}).json()
+                data                        = json_normalize(res, max_level=1)
+                temp_df                     = pd.DataFrame(data)
+                temp_df['repo']             = repo
                 dfs.append(temp_df)
-            df = pd.concat(dfs, ignore_index=True)
+            df                              = pd.concat(dfs, ignore_index=True)
             return df
         except requests.exceptions.RequestException as e:
             raise SystemExit(e)
@@ -48,11 +48,11 @@ class Issues:
 
     def important(self):
         # Selecting Important Columns
-        df= self.df[['created_at', 'state','closed_at','user.login','author_association','title','body','milestone.title','milestone.state','repo']]
+        df                              = self.df[['created_at', 'state','closed_at','user.login','author_association','title','body','milestone.title','milestone.state','repo']]
         # Creating date columns
-        df['created_at'] = pd.to_datetime(df['created_at']).dt.date
-        df['closed_at'] = pd.to_datetime(df['closed_at']).dt.date
-        self.df = df
+        df['created_at']                = pd.to_datetime(df['created_at']).dt.date
+        df['closed_at']                 = pd.to_datetime(df['closed_at']).dt.date
+        self.df                         = df
 
 
     def show_pie(self, column):
