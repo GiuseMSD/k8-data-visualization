@@ -9,12 +9,18 @@ from bokeh.io import show, output_file
 from bokeh.models import Plot, Range1d, MultiLine, Circle, HoverTool, TapTool, BoxSelectTool, WheelZoomTool
 from bokeh.models.graphs import from_networkx, NodesAndLinkedEdges, EdgesAndLinkedNodes
 from bokeh.palettes import Spectral4
+import warnings
+warnings.filterwarnings('ignore')
+
 class Issues:
 
     def __init__(self, repos):
-        self.repos      = repos
-        token           = 'token'
-        self.headers    = {'Authorization': f'token {token}'}
+        self.repos          = repos
+        git_token           = '86734524155dfbb7f7130dd405fb74a55f100d36'
+        self.git_headers    = {'Authorization': f'token {git_token}'}
+        zen_token           = 'c3bd1d296da6c51afa652dcd51cbd33f712ebec8bde25cd9b05d2b4279b8003a1226cb2e2da152fd'
+        self.zen_headers    = {'X-Authentication-token': zen_token}
+        self.zen_ws_id      = '5f43aa60e9220900139f4fb3'
         self.configure_pandas()
         self.df         = self.init_df()
 
@@ -22,13 +28,30 @@ class Issues:
         try:
             dfs         = []
             for repo in self.repos:
-                url                 = f'https://api.github.com/repos/filetrust/{repo}/issues'
-                res                 = requests.get(url, headers=self.headers, params={'state': 'all'}).json()
-                data                = json_normalize(res, max_level=1)
-                temp_df             = pd.DataFrame(data)
-                temp_df['repo']     = repo
+                url                     = f'https://api.github.com/repos/{repo[0]}/issues'
+                res                     = requests.get(url, headers=self.git_headers, params={'state': 'all'}).json()
+                zen_url                 = f'https://api.zenhub.com/p2/workspaces/{self.zen_ws_id}/repositories/{repo[1]}/board'
+                zen_pipeline            = requests.get(zen_url, headers=self.zen_headers).json()
+                zen_pipeline = zen_pipeline['pipelines'] if 'pipelines' in zen_pipeline.keys() else []
+                for issue in res:
+                    number = issue['number']
+                    pipe_name = ''
+                    flag = False
+                    for panel in zen_pipeline:
+                        panel_issues = panel['issues']
+                        for item in panel_issues:
+                            if item['issue_number'] == number:
+                                pipe_name  = panel['name']
+                                flag        = True
+                                break
+                        if flag == True:
+                            break
+                    issue['pipeline'] = pipe_name
+                data                    = json_normalize(res, max_level=1)
+                temp_df                 = pd.DataFrame(data)
+                temp_df['repo']         = repo[0]
                 dfs.append(temp_df)
-            df                      = pd.concat(dfs, ignore_index=True)
+            df                          = pd.concat(dfs, ignore_index=True)
             return df
         except requests.exceptions.RequestException as e:
             raise SystemExit(e)
@@ -45,7 +68,7 @@ class Issues:
 
     def normalize_data(self):
         df                      = self.df
-        df                      = df[['created_at','user.login', 'user.url','author_association', 'title','body', 'state', 'milestone.title','milestone.state','repo']]
+        df                      = df[['created_at','user.login', 'user.url','author_association', 'title','body', 'state', 'repo', 'pipeline', 'assignee.login']]
         df['created_at']        = pd.to_datetime(df['created_at']).dt.date
         self.df                 = df
 
@@ -133,3 +156,15 @@ class Issues:
         # plot.renderers.append(graph_renderer)
         output_file("interactive_graph.html")
         show(plot)
+
+    def show_tabular_report_by_repo(self):
+        df          = self.df
+        user        = df.groupby(['repo', 'pipeline'])
+        pipe_df      = user['title'].count().unstack(-1, 0)
+        return pipe_df
+
+    def show_tabular_report_by_user(self):
+        df          = self.df
+        user        = df.groupby(['assignee.login', 'pipeline'])
+        pipe_df      = user['title'].count().unstack(-1, 0)
+        return pipe_df
